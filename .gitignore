@@ -102,3 +102,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+# gitignore extension additions
+/seawolf.code-workspace
+/optimized
+/.vscode
+/.swc

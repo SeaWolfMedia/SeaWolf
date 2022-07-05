@@ -1,0 +1,17 @@
+---
+version: '3.9'
+services:
+  seawolf:
+    image: seawolf:latest
+    container_name: seawolf
+    ports:
+      - 52470:52470
+    volumes: 
+      - config:/config
+      - content:/content
+
+volumes:
+  config:
+    external: true
+  content:
+    external: true

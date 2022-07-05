@@ -1,0 +1,50 @@
+{
+  "name": "seawolf",
+  "version": "1.0.0",
+  "description": "Your sea of content all on one ship",
+  "main": "server/server.js",
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "start": "node bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SeaWolfMedia/seawolf.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SeaWolfMedia/seawolf/issues"
+  },
+  "homepage": "https://github.com/SeaWolfMedia/seawolf#readme",
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@ffprobe-installer/ffprobe": "^1.4.1",
+    "@mantine/core": "^4.2.12",
+    "@mantine/dates": "^4.2.12",
+    "@mantine/dropzone": "^4.2.12",
+    "@mantine/form": "^4.2.12",
+    "@mantine/hooks": "^4.2.12",
+    "@mantine/modals": "^4.2.12",
+    "@mantine/next": "^4.2.12",
+    "@mantine/notifications": "^4.2.12",
+    "@mantine/prism": "^4.2.12",
+    "@mantine/rte": "^4.2.12",
+    "@mantine/spotlight": "^4.2.12",
+    "dayjs": "^1.11.3",
+    "express": "^4.18.1",
+    "fluent-ffmpeg": "^2.1.2",
+    "fs": "^0.0.1-security",
+    "module-alias": "^2.2.2",
+    "next": "^12.2.0"
+  },
+  "_moduleAliases": {
+    "@seawolf": "."
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.7",
+    "postcss": "^8.4.14",
+    "tailwindcss": "^3.1.4"
+  }
+}
