@@ -104,7 +104,8 @@ dist
 .tern-port
 
 # gitignore extension additions
-/seawolf.code-workspace
 /optimized
 /.vscode
 /.swc
+.env
+docker-compose.yml
