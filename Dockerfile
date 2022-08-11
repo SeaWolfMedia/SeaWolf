@@ -27,7 +27,7 @@ COPY --from=build /app /app
 ENV NODE_ENV production
 
 VOLUME /data \
-/content
+    /content
 
 EXPOSE 52470
 
