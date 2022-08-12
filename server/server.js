@@ -1,6 +1,8 @@
 const express = require("express");
 const next = require('next');
 const fs = require('fs').promises;
+const { createWriteStream, createReadStream } = require("fs");
+const readline = require('readline');
 const path = require('path');
 const { PrismaClient } = require('@prisma/client');
 
@@ -74,43 +76,43 @@ function scanData() {
     });
 }
 
-function scanContentFiles(directory, id) {
+function scanContentFiles(directory, stream) {
     return new Promise(async (resolve, reject) => {
-        var content = await fs.readdir(directory);
-        for (var c of content) {
-            var joined = path.join(directory, c);
-            var stats = await fs.stat(joined);
+        var contents = await fs.readdir(directory);
+        for (var content of contents) {
+            var contentPath = path.join(directory, content);
+            var stats = await fs.stat(contentPath);
             if (stats.isDirectory()) {
-                var folder = await global.prisma.folder.findUnique({
-                    where: {
-                        path: joined,
-                    }
-                });
-                if (folder == null) {
-                    folder = await global.prisma.folder.create({
-                        data: {
-                            name: c,
-                            path: joined,
-                            parentFolderId: id
+                stream.write(JSON.stringify({
+                    type: "folder",
+                    data: {
+                        where: {
+                            path: contentPath,
+                        },
+                        update: {},
+                        create: {
+                            name: content,
+                            path: contentPath,
+                            parentFolderPath: directory
                         }
-                    });
-                }
-                await scanContentFiles(joined, folder.id);
+                    }
+                }) + "\n");
+                await scanContentFiles(contentPath, stream);
             } else {
-                var file = await global.prisma.file.findUnique({
-                    where: {
-                        path: joined,
-                    }
-                });
-                if (file == null) {
-                    await global.prisma.file.create({
-                        data: {
-                            name: c,
-                            path: joined,
-                            folderId: id
+                stream.write(JSON.stringify({
+                    type: "file",
+                    data: {
+                        where: {
+                            path: contentPath
+                        },
+                        update: {},
+                        create: {
+                            name: content,
+                            path: contentPath,
+                            folderPath: directory
                         }
-                    })
-                }
+                    }
+                }) + "\n");
             }
         }
         resolve();
@@ -120,20 +122,42 @@ function scanContentFiles(directory, id) {
 function scanContent() {
     return new Promise(async (resolve, reject) => {
         console.log("Scanning Content...");
-        var directory = await global.prisma.folder.findUnique({
+        await global.prisma.folder.upsert({
             where: {
                 path: contentDirectory,
+            },
+            update: {},
+            create: {
+                name: "root",
+                path: contentDirectory
             }
         });
-        if (directory == null) {
-            directory = await global.prisma.folder.create({
-                data: {
-                    name: "root",
-                    path: contentDirectory
-                }
-            });
+        var upsertsFilePath = path.resolve(dataDirectory, "upserts.seawolf");
+        var writableStream = createWriteStream(upsertsFilePath);
+        await scanContentFiles(contentDirectory, writableStream);
+        writableStream.end();
+        var readableStream = createReadStream(upsertsFilePath)
+        var upserts = [];
+        const rl = readline.createInterface({
+            input: readableStream,
+            crlfDelay: Infinity
+        });
+        for await (var line of rl){
+            var data = JSON.parse(line);
+            if (data.type == "folder") {
+                upserts.push(global.prisma.folder.upsert(data.data));
+            } else {
+                upserts.push(global.prisma.file.upsert(data.data));
+            }
+            if (upserts.length >= 10000) {
+                await global.prisma.$transaction(upserts);
+                upserts = [];
+            }
         }
-        await scanContentFiles(contentDirectory, directory.id);
+        readableStream.close();
+        rl.close();
+        await global.prisma.$transaction(upserts);
+        await fs.unlink(upsertsFilePath);
         resolve();
     });
 }
