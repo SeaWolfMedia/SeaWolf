@@ -13,19 +13,14 @@ async function requestDirectoryContent(directory) {
 }
 
 export default function Browser() {
-  const [initialLoad, setInitialLoad] = useState(false);
   const [content, setContent] = useState([]);
-  const [folderChain, setFolderChain] = useState([]);
+  const [folderChain, setFolderChain] = useState([null]);
 
-  useEffect(() => {
-    if (initialLoad === false) {
-      requestDirectoryContent(1).then((data) => {
-        setContent(data.content);
-        setFolderChain([data.directory]);
-        setInitialLoad(true);
-      })
-    }
-  });
+  useEffect(async () => {
+    var request = await requestDirectoryContent(1);
+    setContent(request.content);
+    setFolderChain([request.directory]);
+  }, []);
 
   const contentAction = async (action) => {
     if (action.id === "open_files") {
@@ -36,13 +31,15 @@ export default function Browser() {
             location = chain;
           }
         }
+        var fc = [...folderChain];
         if(location > -1){
-          setFolderChain(folderChain.slice(0, location + 1));
-        } else {
-          setFolderChain([...folderChain, action.payload.targetFile]);
+          fc = fc.slice(0, location);
         }
+        setFolderChain([...fc, null]);
         setContent([]);
-        setContent((await requestDirectoryContent(action.payload.targetFile.originalId)).content);
+        var request = await requestDirectoryContent(action.payload.targetFile.originalId);
+        setContent(request.content);
+        setFolderChain([...fc, request.directory]);
       }
     }
   }
