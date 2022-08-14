@@ -40,8 +40,16 @@ export default function Browser() {
         var request = await requestDirectoryContent(action.payload.targetFile.originalId);
         setContent(request.content);
         setFolderChain([...fc, request.directory]);
+      } else if (action.payload.targetFile.name.indexOf(".mp4") > -1){
+        var url = new URL(window.location.href);
+        var params = new URLSearchParams(window.location.search);
+        params.set("id", action.payload.targetFile.originalId);
+        url.search = params;
+        url.pathname = "/waves";
+        url = url.toString();
+        window.location = url;
       }
-    }
+    } 
   }
 
   return (

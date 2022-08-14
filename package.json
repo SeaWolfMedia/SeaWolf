@@ -55,6 +55,8 @@
     "autoprefixer": "^10.4.7",
     "postcss": "^8.4.14",
     "prisma": "^4.2.0",
-    "tailwindcss": "^3.1.4"
+    "svg-react-loader": "^0.4.6",
+    "tailwindcss": "^3.1.4",
+    "video.js": "^7.20.2"
   }
 }

@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+export default async function browser(req, res) {
     const directory = await global.prisma.folder.findUnique({
         where: {
             id: parseInt(req.query.directory)
