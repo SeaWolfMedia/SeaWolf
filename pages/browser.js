@@ -1,5 +1,4 @@
-import { Card, Center } from '@mantine/core';
-import { FullFileBrowser } from 'chonky';
+import { FileBrowser, FileNavbar, FileToolbar, FileList, FileContextMenu, FullFileBrowser } from 'chonky';
 import axios from 'axios';
 import { useState, useEffect } from 'react'
 
@@ -15,11 +14,13 @@ async function requestDirectoryContent(directory) {
 export default function Browser() {
   const [content, setContent] = useState([]);
   const [folderChain, setFolderChain] = useState([null]);
+  const [initialLoad, setInitialLoad] = useState(false);
 
   useEffect(async () => {
     var request = await requestDirectoryContent(1);
     setContent(request.content);
     setFolderChain([request.directory]);
+    setInitialLoad(true);
   }, []);
 
   const contentAction = async (action) => {
@@ -32,7 +33,7 @@ export default function Browser() {
           }
         }
         var fc = [...folderChain];
-        if(location > -1){
+        if (location > -1) {
           fc = fc.slice(0, location);
         }
         setFolderChain([...fc, null]);
@@ -40,7 +41,7 @@ export default function Browser() {
         var request = await requestDirectoryContent(action.payload.targetFile.originalId);
         setContent(request.content);
         setFolderChain([...fc, request.directory]);
-      } else if (action.payload.targetFile.name.indexOf(".mp4") > -1){
+      } else if (action.payload.targetFile.name.indexOf(".mp4") > -1) {
         var url = new URL(window.location.href);
         var params = new URLSearchParams(window.location.search);
         params.set("id", action.payload.targetFile.originalId);
@@ -49,16 +50,12 @@ export default function Browser() {
         url = url.toString();
         window.location = url;
       }
-    } 
+    }
   }
 
   return (
-    <Center className="w-screen h-screen bg-sky-600">
-      <Center className="w-4/5 h-4/5">
-        <Card className="w-full h-full">
-          <FullFileBrowser files={content} folderChain={folderChain} onFileAction={contentAction} />
-        </Card>
-      </Center>
-    </Center>
+    <div className="fixed inset-0 w-full h-full">
+      {(initialLoad) ? <FullFileBrowser files={content} folderChain={folderChain} onFileAction={contentAction} /> : <></>}
+    </div>
   )
 }

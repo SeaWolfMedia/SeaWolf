@@ -4,7 +4,11 @@ import { SessionProvider } from "next-auth/react"
 import { setChonkyDefaults } from 'chonky';
 import { ChonkyIconFA } from 'chonky-icon-fontawesome';
 
-setChonkyDefaults({ iconComponent: ChonkyIconFA });
+setChonkyDefaults({
+    iconComponent: ChonkyIconFA,
+    disableDragAndDrop: true,
+    disableSelection: true
+});
 
 export default function App({
     Component,
