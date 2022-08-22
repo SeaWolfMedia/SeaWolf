@@ -2,7 +2,6 @@
 .swc
 .vscode
 node_modules
-optimized
 .dockerignore
 .gitignore
 docker-compose.yml
