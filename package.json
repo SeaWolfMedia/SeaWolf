@@ -45,7 +45,8 @@
     "module-alias": "^2.2.2",
     "next": "^12.2.0",
     "next-auth": "^4.9.0",
-    "tabler-icons-react": "^1.52.0"
+    "tabler-icons-react": "^1.52.0",
+    "videojs-mobile-ui": "^0.7.0"
   },
   "_moduleAliases": {
     "@seawolf": ".",

@@ -1,6 +1,8 @@
 import React from 'react';
 import videojs from 'video.js';
+import 'videojs-mobile-ui'
 import 'video.js/dist/video-js.css';
+import 'videojs-mobile-ui/dist/videojs-mobile-ui.css';
 
 // export function VideoJS(props) {
 //     const videoRef = useRef(null);
@@ -31,6 +33,8 @@ export const VideoJS = (props) => {
                 onReady && onReady(player);
             });
 
+            player.mobileUi();
+
             // You could update an existing player in the `else` block here
             // on prop change, for example:
         } else {
@@ -55,7 +59,7 @@ export const VideoJS = (props) => {
 
     return (
         <div data-vjs-player>
-            <video ref={videoRef} className='video-js vjs-big-play-centered' />
+            <video ref={videoRef} className='video-js vjs-big-play-centered vjs-default-skin' />
         </div>
     );
 }
