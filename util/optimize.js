@@ -1,17 +1,20 @@
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffprobePath = require('@ffprobe-installer/ffprobe').path;
 const ffmpeg = require('fluent-ffmpeg');
+const fs = require('fs');
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
 
 function optimize(file) {
     return new Promise(async (resolve, reject) => {
-        var measuredValues = await measureLoudness(file);
-        await transcode(file, measuredValues);
+        //var measuredValues = await measureAudioLoudness(file);
+        await transcode({
+            file: file
+        });//file, measuredValues);
     });
 }
 
-function measureLoudness(file) {
+function measureAudioLoudness(file) {
     return new Promise((resolve, reject) => {
         ffmpeg(file)
             .audioFilters([
@@ -42,10 +45,16 @@ function measureLoudness(file) {
     });
 }
 
-function transcode(file, measuredValues) {
+function transcode(transcodeOptions) {//file, measuredValues) {
     return new Promise((resolve, reject) => {
-        var transcodeCommand = ffmpeg(file).preset(transcodePreset)
-        if (measuredValues !== undefined) {
+        if(transcodeOptions.file === undefined){
+            reject("Must provide a file path");
+        }
+        // if(transcodeOptions.preset === undefined){
+        //     reject("Must provide a preset");
+        // }
+        var transcodeCommand = ffmpeg(transcodeOptions.file).preset(transcodePreset)
+        if (transcodeOptions.measuredAudioLoudness !== undefined) {
             transcodeCommand.audioFilters([
                 {
                     filter: 'loudnorm',
@@ -74,7 +83,7 @@ function transcode(file, measuredValues) {
                 console.log("File Is Now Optimized");
                 resolve();
             })
-            .save("optimized/outputfile-loudnorm.mp4")
+            .save("C:\\Users\\robbinip\\Desktop\\seawolf workspace\\content\\freeguy-fixedPixels-noSetProfile.mp4")
     })
 }
 
@@ -84,4 +93,35 @@ function transcodePreset(command) {
         .audioCodec('aac')
         .audioBitrate(256)
         .audioChannels(2)
+        .addOption('-pix_fmt', 'yuv420p');
 }
+
+var resolution = [
+    { name: '480p', dots: 852, lines: 480 },
+    { name: '576p', dots: 768, lines: 576 },
+    { name: '720p', dots: 1280, lines: 720 },
+    { name: '1080p', dots: 1920, lines: 1080 },
+    { name: '2160p', dots: 3840, lines: 2160 },
+    { name: '4320p', dots: 7680, lines: 4320 },
+];
+
+function findResolution(dots, lines) {
+    var i = 0;
+    while (lines > resolution[i].lines) {
+        i++;
+    }
+    while (dots > resolution[i].dots) {
+        i++;
+    }
+    return resolution[i].name;
+}
+
+console.log(findResolution(1920, 804));
+
+//optimize("C:\\Users\\robbinip\\Desktop\\seawolf workspace\\content\\Free Guy (2021) Bluray-1080p.mp4");
+
+//ffmpeg - i in.mp4 - f ffmetadata in.txt
+
+// ffmpeg.ffprobe("C:\\Users\\robbinip\\Desktop\\seawolf workspace\\content\\freeguy-fixedPixels.mp4", (err, metadata) => {
+//     fs.writeFile("fixedPixels.json", JSON.stringify(metadata), () => {})
+// })
