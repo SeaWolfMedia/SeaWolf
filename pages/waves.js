@@ -7,12 +7,12 @@ import Loading from '-!svg-react-loader?name=Loading!../public/waves/loading.svg
 export default function Waves() {
     const router = useRouter();
     const query = router.query;
-    const [wavesOptions, setWavesOptions] = useState({
+    const wavesOptions = {
         autoplay: true,
         controls: true,
         responsive: true,
         fill: true
-    });
+    };
     const playerRef = useRef(null);
 
     const handlePlayerReady = (player) => {
@@ -37,8 +37,8 @@ export default function Waves() {
     };
 
     return (
-        <Center className="bg-black w-screen h-screen">
+        <div className="fixed inset-0 w-full h-full">
             {(router.isReady) ? <VideoJS options={wavesOptions} onReady={handlePlayerReady} /> : <Loading />}
-        </Center>
+        </div>
     )
 }
