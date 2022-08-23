@@ -21,22 +21,10 @@ module.exports = {
          */
         "cronTime": "* * * * * *",
         /**
-         * Code to run at the specified time
-         * 
-         * Can call onComplete() in the function if needed
-         * 
-         * @param {Function} onComplete
-         */
-        "onTick": (onComplete) => {},
-        /**
-         * Code to run when the cron job is stopped or after the specified time
-         */
-        "onComplete": () => {},
-        /**
          * Start the cron job as soon as it is created
          * @boolean
          */
-        "start": true,
+        "start": false,
         /**
          * The timezone the cron job will be based off of
          */
@@ -48,6 +36,18 @@ module.exports = {
          * 
          * @boolean
          */
-        "runOnInit": true
+        "runOnInit": false,
+        /**
+         * Code to run at the specified time
+         * 
+         * Can call onComplete() in the function if needed
+         * 
+         * @param {Function} onComplete
+         */
+        "onTick": (onComplete) => {},
+        /**
+         * Code to run when the cron job is stopped or after the specified time
+         */
+        "onComplete": () => {}
     }
 }
