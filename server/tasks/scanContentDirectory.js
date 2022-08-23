@@ -91,7 +91,7 @@ module.exports = {
                     } else {
                         upserts.push(prisma.file.upsert(data.data));
                     }
-                    if (upserts.length >= 10000) {
+                    if (upserts.length >= 100000) {
                         await prisma.$transaction(upserts);
                         upserts = [];
                     }
