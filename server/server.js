@@ -5,14 +5,15 @@ const { createWriteStream, createReadStream } = require("fs");
 const readline = require('readline');
 const path = require('path');
 const { PrismaClient } = require('@prisma/client');
+const tasks = require("./util/tasks.js");
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-const rootDirectory = path.resolve(path.normalize("../"));
-const dataDirectory = path.resolve(rootDirectory, "data");
-const contentDirectory = path.resolve(rootDirectory, "content");
+global.rootDirectory = path.resolve(path.normalize("../"));
+global.dataDirectory = path.resolve(rootDirectory, "data");
+global.contentDirectory = path.resolve(rootDirectory, "content");
 
 let CONFIG = {};
 
@@ -23,6 +24,7 @@ async function start() {
     await scanContent();
     await prepareNextjs();
     await hostWebsite();
+    tasks.init();
     console.log("SeaWolf Server Available");
 }
 
@@ -122,7 +124,7 @@ function scanContentFiles(directory, stream) {
 function scanContent() {
     return new Promise(async (resolve, reject) => {
         console.log("Scanning Content...");
-        await global.prisma.folder.upsert({
+        await prisma.folder.upsert({
             where: {
                 path: contentDirectory,
             },
@@ -145,18 +147,18 @@ function scanContent() {
         for await (var line of rl){
             var data = JSON.parse(line);
             if (data.type == "folder") {
-                upserts.push(global.prisma.folder.upsert(data.data));
+                upserts.push(prisma.folder.upsert(data.data));
             } else {
-                upserts.push(global.prisma.file.upsert(data.data));
+                upserts.push(prisma.file.upsert(data.data));
             }
             if (upserts.length >= 10000) {
-                await global.prisma.$transaction(upserts);
+                await prisma.$transaction(upserts);
                 upserts = [];
             }
         }
         readableStream.close();
         rl.close();
-        await global.prisma.$transaction(upserts);
+        await prisma.$transaction(upserts);
         await fs.unlink(upsertsFilePath);
         resolve();
     });
@@ -174,20 +176,6 @@ function prepareNextjs() {
 function hostWebsite() {
     return new Promise(async (resolve, reject) => {
         const server = express();
-
-        // server.use((req, res, n) => {
-        //     res.set("Service-Worker-Allowed", "/");
-        //     if(req.url !== "/setup" && CONFIG.setup === false){
-        //         res.redirect("/setup");
-        //     }
-        //     n();
-        // });
-
-        // server.use(express.static("@seawolf/public", {
-        //     setHeaders: function (res) {
-        //         res.set("Service-Worker-Allowed", "/");
-        //     }
-        // }));
 
         server.all("*", (req, res) => {
             return handle(req, res);
