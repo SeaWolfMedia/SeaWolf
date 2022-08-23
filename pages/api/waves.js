@@ -1,5 +1,11 @@
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const ffprobePath = require('@ffprobe-installer/ffprobe').path;
+const ffmpeg = require('fluent-ffmpeg');
 const fs = require('fs').promises;
-const { createReadStream } = require("fs");
+ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobePath);
+
+const { createReadStream, createWriteStream } = require("fs");
 
 export default async function waves(req, res) {
     const range = req.headers.range;
@@ -31,6 +37,16 @@ export default async function waves(req, res) {
         "Content-Type": "video/mp4",
     };
     res.writeHead(206, headers);
-    const videoStream = createReadStream(waveFilePath, { start, end });
+    const videoStream = createReadStream(waveFilePath, { start: start, end: end });
+    // ffmpeg(videoStream)
+    //     .inputFormat('mp4')
+    //     .outputFormat('mp4')
+    //     .videoCodec('libx264')
+    //     .audioCodec('aac')
+    //     .addOption('-pix_fmt', 'yuv420p')
+    //     .outputOptions([
+    //         '-movflags frag_keyframe+empty_moov'
+    //     ])
+    //     .save("-");
     videoStream.pipe(res);
 }
