@@ -83,7 +83,7 @@ function transcode(transcodeOptions) {//file, measuredValues) {
                 console.log("File Is Now Optimized");
                 resolve();
             })
-            .save("C:\\Users\\robbinip\\Desktop\\seawolf workspace\\content\\freeguy-fixedPixels-noSetProfile.mp4")
+            .save("C:\\Users\\robbinip\\Desktop\\seawolf workspace\\content\\freeguy-fixedPixels-noSetProfile-again.mp4")
     })
 }
 
@@ -116,9 +116,9 @@ function findResolution(dots, lines) {
     return resolution[i].name;
 }
 
-console.log(findResolution(1920, 804));
+//console.log(findResolution(1920, 804));
 
-//optimize("C:\\Users\\robbinip\\Desktop\\seawolf workspace\\content\\Free Guy (2021) Bluray-1080p.mp4");
+//optimize("C:\\Users\\robbinip\\Desktop\\seawolf workspace\\content\\freeguy-fixedPixels-noSetProfile.mp4");
 
 //ffmpeg - i in.mp4 - f ffmetadata in.txt
 
