@@ -104,7 +104,7 @@ COPY --from=BUILD_IMAGE /app/.next/standalone/node_modules ./node_modules
 COPY --from=BUILD_IMAGE /app/prisma ./prisma
 COPY --from=BUILD_IMAGE /app/public ./public
 COPY --from=BUILD_IMAGE /app/server ./server
-COPY --from=BUILD_IMAGE /app/package.json /app/yarn.lock /app/config-default.json /app/next.config.js /app/.env ./
+COPY --from=BUILD_IMAGE /app/package.json /app/yarn.lock /app/config-default.json /app/next.config.js ./
 
 RUN rm -rf ./.next/standalone
 
