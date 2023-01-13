@@ -7,9 +7,10 @@ ffmpeg.setFfprobePath(ffprobePath);
 
 function optimize(file) {
     return new Promise(async (resolve, reject) => {
-        //var measuredValues = await measureAudioLoudness(file);
+        let measuredAudio = await measureAudioLoudness(file);
         await transcode({
-            file: file
+            file: file,
+            measuredAudioLoudness: measuredAudio
         });//file, measuredValues);
     });
 }
@@ -62,11 +63,11 @@ function transcode(transcodeOptions) {//file, measuredValues) {
                         I: -16,
                         TP: -1.5,
                         LRA: 11,
-                        measured_I: measuredValues.input_i,
-                        measured_TP: measuredValues.input_tp,
-                        measured_LRA: measuredValues.input_lra,
-                        measured_thresh: measuredValues.input_thresh,
-                        offset: measuredValues.target_offset,
+                        measured_I: transcodeOptions.measuredAudioLoudness.input_i,
+                        measured_TP: transcodeOptions.measuredAudioLoudness.input_tp,
+                        measured_LRA: transcodeOptions.measuredAudioLoudness.input_lra,
+                        measured_thresh: transcodeOptions.measuredAudioLoudness.input_thresh,
+                        offset: transcodeOptions.measuredAudioLoudness.target_offset,
                         linear: true
                     }
                 }
@@ -83,7 +84,7 @@ function transcode(transcodeOptions) {//file, measuredValues) {
                 console.log("File Is Now Optimized");
                 resolve();
             })
-            .save("C:\\Users\\robbinip\\Desktop\\seawolf workspace\\content\\freeguy-fixedPixels-noSetProfile-again.mp4")
+            .save("D:\\Coding\\SeaWolf_Example_Data\\content\\tv\\moon knight\\Moon Knight - S01E05 - Asylum WEBDL-1080p-optimized.mp4")
     })
 }
 
@@ -96,7 +97,7 @@ function transcodePreset(command) {
         .addOption('-pix_fmt', 'yuv420p');
 }
 
-var resolution = [
+const resolution = [
     { name: '480p', dots: 852, lines: 480 },
     { name: '576p', dots: 768, lines: 576 },
     { name: '720p', dots: 1280, lines: 720 },
@@ -118,7 +119,7 @@ function findResolution(dots, lines) {
 
 //console.log(findResolution(1920, 804));
 
-//optimize("C:\\Users\\robbinip\\Desktop\\seawolf workspace\\content\\freeguy-fixedPixels-noSetProfile.mp4");
+//optimize("D:\\Coding\\SeaWolf_Example_Data\\content\\tv\\moon knight\\Moon Knight - S01E05 - Asylum WEBDL-1080p.mkv");
 
 //ffmpeg - i in.mp4 - f ffmetadata in.txt
 

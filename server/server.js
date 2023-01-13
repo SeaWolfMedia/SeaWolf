@@ -2,7 +2,7 @@ const express = require("express");
 const next = require('next');
 const fs = require('fs').promises;
 const path = require('path');
-const { PrismaClient } = require('@prisma/client');
+global.db = require("@util/prismaManager.js");
 const tasks = require("./util/tasks.js");
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -53,22 +53,9 @@ function scanData() {
             await fs.access(databaseFilePath);
             console.log("Database Exists");
         } catch (databaseError) {
-            try {
-                console.log("! Database Does Not Exist !");
-                await fs.copyFile("prisma/seawolf-default.db", databaseFilePath);
-                console.log("Database Created");
-            } catch (defaultConfigError) {
-                console.log("! Default Database Does Not Exist !");
-                reject("Configuration Error");
-            }
+            console.error("Database doesnt exist. Create database here later.");
+            reject("No Database");
         }
-        global.prisma = new PrismaClient({
-            datasources: {
-                db: {
-                    url: "file:" + (path.resolve(dataDirectory, "seawolf.db")).replaceAll("\\", "/")
-                }
-            }
-        });
         resolve();
     });
 }

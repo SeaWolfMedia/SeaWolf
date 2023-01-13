@@ -26,9 +26,15 @@ exports.init = async () => {
             TASKS.push({
                 name: task.name,
                 description: task.description,
-                job: {}
-            })
+                job: {
+                    onTick: task.manual.onTick,
+                    onComplete: task.manual.onComplete,
+                    runOnInit: task.manual.runOnInit
+                }
+            });
+            if(task.manual.runOnInit){
+                task.manual.onTick(task.manual.onComplete);
+            }
         }
-        
     }
 }

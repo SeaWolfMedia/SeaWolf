@@ -1,19 +1,17 @@
 export default async function browser(req, res) {
-    const directory = await global.prisma.folder.findUnique({
+    const directoryId = parseInt(req.query.directory);
+    const q = (await db.query("folder", "findUnique", {
         where: {
-            id: parseInt(req.query.directory)
+            id: directoryId
+        },
+        select: {
+            files: true,
+            folders: true
         }
-    })
-    const files = await global.prisma.folder.findUnique({
-        where: {
-            id: parseInt(req.query.directory)
-        }
-    }).files();
-    const folders = await global.prisma.folder.findUnique({
-        where: {
-            id: parseInt(req.query.directory)
-        }
-    }).folders();
+    })).query;
+    const directory = await db.execute(q);
+    const files = directory.files;
+    const folders = directory.folders;
     directory.originalId = directory.id;
     directory.id = directory.path;
     directory.isDir = true;
