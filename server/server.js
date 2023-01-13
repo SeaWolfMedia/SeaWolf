@@ -2,6 +2,8 @@ const express = require("express");
 const next = require('next');
 const fs = require('fs').promises;
 const path = require('path');
+const { exec } = require('child_process');
+const chokidar = require('chokidar');
 global.db = require("@util/prismaManager.js");
 const tasks = require("./util/tasks.js");
 
@@ -52,11 +54,21 @@ function scanData() {
         try {
             await fs.access(databaseFilePath);
             console.log("Database Exists");
+            resolve();
         } catch (databaseError) {
-            console.error("Database doesnt exist. Create database here later.");
-            reject("No Database");
+            console.error("Database doesnt exist. Creating...");
+            exec("yarn prisma:migrate");
+            const waitForDatabase = chokidar.watch(global.dataDirectory).on('add', async (fullpath) => {
+                if(fullpath == databaseFilePath){
+                    console.log("added database");
+                    waitForDatabase.close().then(() => {
+                        resolve();
+                    });
+                }
+            });
+            //resolve();
+            //reject("No Database");
         }
-        resolve();
     });
 }
 
