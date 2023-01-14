@@ -5,7 +5,8 @@ const readline = require('readline');
 const { DateTime } = require("luxon");
 const chokidar = require('chokidar');
 const fastFolderSizeSync = require('fast-folder-size/sync');
-const watch = require("watch");
+//const watch = require("watch");
+const { watch } = require('fs');
 
 let running = false;
 let startTime;
@@ -121,18 +122,29 @@ async function onTick(onComplete) {
     console.time("scan");
     //console.log(fastFolderSizeSync(contentDirectory));
 
-    watch.watchTree(contentDirectory, (f, curr, prev) => {
-        if (typeof f == "object" && prev === null && curr === null) {
-            console.log("Finished walking the tree");
-            console.timeEnd("scan");
-        } else if (prev === null) {
-            console.log(`${f} is a new file`);
-        } else if (curr.nlink === 0) {
-            console.log(`${f} was removed`);
-        } else {
-            console.log(`${f} was changed`);
+    //below watchtree works but can be intensive
+
+    // watch.watchTree(contentDirectory, (f, curr, prev) => {
+    //     if (typeof f == "object" && prev === null && curr === null) {
+    //         console.log("Finished walking the tree");
+    //         console.timeEnd("scan");
+    //     } else if (prev === null) {
+    //         console.log(`${f} is a new file`);
+    //     } else if (curr.nlink === 0) {
+    //         console.log(`${f} was removed`);
+    //     } else {
+    //         console.log(`${f} was changed`);
+    //     }
+    // });
+
+
+    watch(contentDirectory, {
+        recursive: true
+    }, async (event, filename) => {
+        if (filename) {
+            console.log(`${filename} file Changed`);
         }
-    });
+    }); 
 
     //11022799574
 
@@ -150,6 +162,7 @@ async function onTick(onComplete) {
         }
     })).query;
     await db.execute(rootQuery);
+    console.timeEnd("scan");
     //await directoryUpdates(contentDirectory);
     return;
     // await db.transaction(async (tx) => {
