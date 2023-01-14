@@ -58,7 +58,7 @@ function scanData() {
         } catch (databaseError) {
             console.error("Database doesnt exist. Creating...");
             exec("yarn prisma:migrate");
-            const waitForDatabase = chokidar.watch(global.dataDirectory).on('add', async (fullpath) => {
+            const waitForDatabase = chokidar.watch(databaseFilePath).on('add', async (fullpath) => {
                 if(fullpath == databaseFilePath){
                     console.log("added database");
                     waitForDatabase.close().then(() => {

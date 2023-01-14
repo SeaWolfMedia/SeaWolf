@@ -23,8 +23,8 @@ async function nextQueueItem() {
                     itemData = await queueItem.item;
                 } else if (queueItem.query) {
                     itemData = prisma[queueItem.database][queueItem.query](queueItem.data);
-                } else if (queueItem.array) {
-                    itemData = prisma.$transaction(queueItem.array);
+                } else if (queueItem.transaction) {
+                    itemData = await prisma.$transaction(queueItem.transaction);
                 }
                 break;
             } catch (e) {
@@ -64,9 +64,9 @@ function addToQueryQueue(database, query, data, callback) {
     nextQueueItem();
 }
 
-function addToTransactionQueue(array, callback) {
+function addToTransactionQueue(transaction, callback) {
     queue.push({
-        array: array,
+        transaction: transaction,
         callback: callback
     });
     nextQueueItem();
@@ -98,9 +98,9 @@ async function query(database, query, data) {
     });
 }
 
-async function transaction(array) {
+async function transaction(transaction) {
     return new Promise(async (resolve, reject) => {
-        addToTransactionQueue(array, (result) => {
+        addToTransactionQueue(transaction, (result) => {
             if (result instanceof Prisma.PrismaClientKnownRequestError) {
                 console.log("failed failure");
                 reject(result);

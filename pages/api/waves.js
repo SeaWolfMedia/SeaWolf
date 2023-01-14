@@ -16,11 +16,12 @@ export default async function waves(req, res) {
     if (!waveId){
         res.status(400).send("Requires Wave ID");
     }
-    const waveData = await global.prisma.file.findUnique({
+    const query = (await db.query("file", "findUnique", {
         where: {
             id: waveId
         }
-    })
+    })).query;
+    const waveData = await db.execute(query);
     if (!waveData){
         res.status(400).send("Invalid Wave ID");
     }
