@@ -2311,6 +2311,13 @@ inline-style-parser@0.1.1:
   resolved "https://registry.yarnpkg.com/inline-style-parser/-/inline-style-parser-0.1.1.tgz#ec8a3b429274e9c0a1f1c4ffa9453a7fef72cea1"
   integrity sha512-7NXolsK4CAS5+xvdj5OMMbI962hU/wvwoxk+LWR9Ek9bVtyuuYScDN6eS0rUm6TxApFpw7CX1o4uJzcd4AyD3Q==
 
+inotifywait@^1.8.3:
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/inotifywait/-/inotifywait-1.8.3.tgz#16edff3f15e7955d5f51c8b769a22698d7acab05"
+  integrity sha512-7D0PPEc7uqucLURTkSoLl971ONvLEfniEmzGLfuy8xZXBw3a4GMmVHIq9EqlmhMb97m0HDsz/coHCIKTnTjx8w==
+  dependencies:
+    lazy "~1.0.11"
+
 intl-messageformat@9.13.0:
   version "9.13.0"
   resolved "https://registry.yarnpkg.com/intl-messageformat/-/intl-messageformat-9.13.0.tgz#97360b73bd82212e4f6005c712a4a16053165468"
@@ -2578,6 +2585,11 @@ klona@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.5.tgz#d166574d90076395d9963aa7a928fabb8d76afbc"
   integrity sha512-pJiBpiXMbt7dkzXe8Ghj/u4FfXOOa98fPW+bihOJ4SjnoijweJrNThJfd3ifXpXhREjpoF2mZVH1GfS9LV3kHQ==
+
+lazy@~1.0.11:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/lazy/-/lazy-1.0.11.tgz#daa068206282542c088288e975c297c1ae77b690"
+  integrity sha512-Y+CjUfLmIpoUCCRl0ub4smrYtGGr5AOa2AKOaWelGHOGz33X/Y/KizefGqbkwfz44+cnq/+9habclf8vOmu2LA==
 
 lilconfig@^2.0.5, lilconfig@^2.0.6:
   version "2.0.6"

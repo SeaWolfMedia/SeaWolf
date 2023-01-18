@@ -45,10 +45,11 @@
 # We're starting with the same base image, but we're declaring
 # that this block outputs an image called DEPS that we
 # won't be deploying - it just installs our Yarn deps
-FROM node:16-alpine AS deps
+FROM node:18-alpine AS deps
 
 # If you need libc for any of your deps, uncomment this line:
 # RUN apk add --no-cache libc6-compat
+
 
 # Copy over ONLY the package.json and yarn.lock
 # so that this `yarn install` layer is only recomputed
@@ -60,7 +61,7 @@ RUN yarn install --frozen-lockfile
 # END DEPS IMAGE
 
 # Now we make a container to handle our Build
-FROM node:16-alpine AS BUILD_IMAGE
+FROM node:18-alpine AS BUILD_IMAGE
 
 # Set up our work directory again
 WORKDIR /app
@@ -81,7 +82,9 @@ RUN yarn prisma:generate
 # END OF BUILD_IMAGE
 
 # This starts our application's run image - the final output of build.
-FROM node:16-alpine
+FROM node:18-alpine
+
+RUN apk update && apk add inotify-tools
 
 ENV NODE_ENV production
 

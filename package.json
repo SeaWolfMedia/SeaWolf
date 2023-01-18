@@ -32,6 +32,7 @@
     "fast-folder-size": "^1.7.1",
     "fluent-ffmpeg": "^2.1.2",
     "fs": "^0.0.1-security",
+    "inotifywait": "^1.8.3",
     "luxon": "^3.0.1",
     "module-alias": "^2.2.2",
     "next": "^13.1.1",

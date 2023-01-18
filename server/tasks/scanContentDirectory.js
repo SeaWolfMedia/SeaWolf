@@ -8,6 +8,8 @@ const fastFolderSizeSync = require('fast-folder-size/sync');
 //const watch = require("watch");
 const { watch } = require('fs');
 
+const INotifyWait = require('inotifywait');
+
 let running = false;
 let startTime;
 
@@ -138,13 +140,45 @@ async function onTick(onComplete) {
     // });
 
 
-    watch(contentDirectory, {
-        recursive: true
-    }, async (event, filename) => {
-        if (filename) {
-            console.log(`${filename} file Changed`);
-        }
-    }); 
+    // watch(contentDirectory, {
+    //     recursive: true
+    // }, async (event, filename) => {
+    //     if (filename) {
+    //         console.log(`${filename} file Changed`);
+    //     }
+    // }); 
+
+    // watcher = chokidar.watch(global.contentDirectory, {
+    //     usePolling: true,
+    //     awaitWriteFinish: true
+    // });
+
+    // watcher.on("all", (event, path) => {
+    //     console.log(event, path);
+    // });
+
+    watcher = new INotifyWait(contentDirectory, { recursive: true });
+    watcher.on('ready', function (filename) {
+        console.log('watcher is watching');
+    });
+    watcher.on('add', function (filename) {
+        console.log(filename + ' added');
+    });
+    watcher.on('change', function (filename) {
+        console.log(filename + ' changed');
+    });
+    watcher.on('unlink', function (filename) {
+        console.log(filename + ' unlinked');
+    });
+    watcher.on('unknown', function (filename) {
+        console.log(filename + ' unknown');
+    });
+    watcher.on('close', function () {
+        console.log('closed');
+    });
+    watcher.on('error', function (error) {
+        console.log(error);
+    });
 
     //11022799574
 
@@ -162,7 +196,7 @@ async function onTick(onComplete) {
         }
     })).query;
     await db.execute(rootQuery);
-    console.timeEnd("scan");
+    //console.timeEnd("scan");
     //await directoryUpdates(contentDirectory);
     return;
     // await db.transaction(async (tx) => {
