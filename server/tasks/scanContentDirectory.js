@@ -7,6 +7,7 @@ const chokidar = require('chokidar');
 const fastFolderSizeSync = require('fast-folder-size/sync');
 //const watch = require("watch");
 const { watch } = require('fs');
+const fsUtils = require("nodejs-fs-utils");
 
 const INotifyWait = require('inotifywait');
 
@@ -120,6 +121,18 @@ async function directoryUpdates(directory) {
     }
 }
 
+function formatBytes(bytes, decimals = 2) {
+    if (!+bytes) return '0 Bytes'
+
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+}
+
 async function onTick(onComplete) {
     console.time("scan");
     //console.log(fastFolderSizeSync(contentDirectory));
@@ -148,37 +161,60 @@ async function onTick(onComplete) {
     //     }
     // }); 
 
-    // watcher = chokidar.watch(global.contentDirectory, {
-    //     usePolling: true,
-    //     awaitWriteFinish: true
+    watcher = chokidar.watch(global.contentDirectory, {
+        usePolling: true,
+        awaitWriteFinish: true,
+        alwaysStat: false
+    });
+
+    watcher.on("all", (event, path) => {
+        console.log(event, path);
+    });
+
+    // watcher.on("add", (path, stats) => {
+    //     //console.log(path, stats);
+    //     watcher.unwatch(path);
+    //     //watcher.add(path);
     // });
 
-    // watcher.on("all", (event, path) => {
-    //     console.log(event, path);
+    // watcher.on("change", (path, stats) => {
+    //     console.log(path, stats);
+    // })
+
+    // watcher = new INotifyWait(contentDirectory, { recursive: true });
+    // watcher.on('ready', function (filename) {
+    //     console.log('watcher is watching');
+    // });
+    // watcher.on('add', function (filename) {
+    //     console.log(filename + ' added');
+    // });
+    // watcher.on('change', function (filename) {
+    //     console.log(filename + ' changed');
+    // });
+    // watcher.on('unlink', function (filename) {
+    //     console.log(filename + ' unlinked');
+    // });
+    // watcher.on('unknown', function (filename) {
+    //     console.log(filename + ' unknown');
+    // });
+    // watcher.on('close', function () {
+    //     console.log('closed');
+    // });
+    // watcher.on('error', function (error) {
+    //     console.log(error);
     // });
 
-    watcher = new INotifyWait(contentDirectory, { recursive: true });
-    watcher.on('ready', function (filename) {
-        console.log('watcher is watching');
-    });
-    watcher.on('add', function (filename) {
-        console.log(filename + ' added');
-    });
-    watcher.on('change', function (filename) {
-        console.log(filename + ' changed');
-    });
-    watcher.on('unlink', function (filename) {
-        console.log(filename + ' unlinked');
-    });
-    watcher.on('unknown', function (filename) {
-        console.log(filename + ' unknown');
-    });
-    watcher.on('close', function () {
-        console.log('closed');
-    });
-    watcher.on('error', function (error) {
-        console.log(error);
-    });
+    //let size = fastFolderSizeSync(".");
+    //console.log(size);
+
+    // console.time("first");
+    // let size = fastFolderSizeSync(rootDirectory);//fsUtils.fsizeSync(rootDirectory);
+    // console.timeEnd("first");
+    // console.log(formatBytes(size));
+    // console.time("second");
+    // size = fastFolderSizeSync(rootDirectory);//fsUtils.fsizeSync(rootDirectory);
+    // console.timeEnd("second");
+    // console.log(formatBytes(size));
 
     //11022799574
 

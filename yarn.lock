@@ -2773,6 +2773,11 @@ module-alias@^2.2.2:
   resolved "https://registry.yarnpkg.com/module-alias/-/module-alias-2.2.2.tgz#151cdcecc24e25739ff0aa6e51e1c5716974c0e0"
   integrity sha512-A/78XjoX2EmNvppVWEhM2oGk3x4lLxnkEA4jTbaK97QKSDjkIoOsKQlfylt/d3kKKi596Qy3NP5XrXJ6fZIC9Q==
 
+module-require@*:
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/module-require/-/module-require-1.4.5.tgz#633df0833443c9ad8596f4c42e5237348355af88"
+  integrity sha512-ksEXPs62btutKsbJKph7rLhdu7A6JIIHXTqvr3uhOP1mViI8JeHkNzYHJnVlHVCaRCuHa7XMBnKmxc23YZGl6Q==
+
 mpd-parser@0.21.1:
   version "0.21.1"
   resolved "https://registry.yarnpkg.com/mpd-parser/-/mpd-parser-0.21.1.tgz#4f4834074ed0a8e265d8b04a5d2d7b5045a4fa55"
@@ -2873,6 +2878,13 @@ node-releases@^2.0.6:
   version "2.0.8"
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.8.tgz#0f349cdc8fcfa39a92ac0be9bc48b7706292b9ae"
   integrity sha512-dFSmB8fFHEH/s81Xi+Y/15DQY6VHW81nXRj86EMSL3lmuTmK1e+aT4wrFCkTbm+gSwkw4KpX+rT/pMM2c1mF+A==
+
+nodejs-fs-utils@^1.2.6:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/nodejs-fs-utils/-/nodejs-fs-utils-1.2.6.tgz#a0a55839d5d28d074fb6ee5ecff83246de5cb9ce"
+  integrity sha512-uDIfV3Qvjrtis2jOhHYzvUTAReqtnBXCVm0efjAYDgrCgZZBDxMQcZE7SsDAui4zzQ7GpqYUFUwoOpOoQD4vpA==
+  dependencies:
+    module-require "*"
 
 normalize-path@^3.0.0, normalize-path@~3.0.0:
   version "3.0.0"
