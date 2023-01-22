@@ -161,15 +161,15 @@ async function onTick(onComplete) {
     //     }
     // }); 
 
-    watcher = chokidar.watch(global.contentDirectory, {
-        usePolling: true,
-        awaitWriteFinish: true,
-        alwaysStat: false
-    });
+    // watcher = chokidar.watch(global.contentDirectory, {
+    //     //usePolling: true,
+    //     awaitWriteFinish: true,
+    //     //alwaysStat: false
+    // });
 
-    watcher.on("all", (event, path) => {
-        console.log(event, path);
-    });
+    // watcher.on("all", (event, path) => {
+    //     console.log(event, path);
+    // });
 
     // watcher.on("add", (path, stats) => {
     //     //console.log(path, stats);
@@ -181,28 +181,28 @@ async function onTick(onComplete) {
     //     console.log(path, stats);
     // })
 
-    // watcher = new INotifyWait(contentDirectory, { recursive: true });
-    // watcher.on('ready', function (filename) {
-    //     console.log('watcher is watching');
-    // });
-    // watcher.on('add', function (filename) {
-    //     console.log(filename + ' added');
-    // });
-    // watcher.on('change', function (filename) {
-    //     console.log(filename + ' changed');
-    // });
-    // watcher.on('unlink', function (filename) {
-    //     console.log(filename + ' unlinked');
-    // });
-    // watcher.on('unknown', function (filename) {
-    //     console.log(filename + ' unknown');
-    // });
-    // watcher.on('close', function () {
-    //     console.log('closed');
-    // });
-    // watcher.on('error', function (error) {
-    //     console.log(error);
-    // });
+    watcher = new INotifyWait(contentDirectory, { recursive: true });
+    watcher.on('ready', function (filename) {
+        console.log('watcher is watching');
+    });
+    watcher.on('add', function (filename) {
+        console.log(filename + ' added');
+    });
+    watcher.on('change', function (filename) {
+        console.log(filename + ' changed');
+    });
+    watcher.on('unlink', function (filename) {
+        console.log(filename + ' unlinked');
+    });
+    watcher.on('unknown', function (filename) {
+        console.log(filename + ' unknown');
+    });
+    watcher.on('close', function () {
+        console.log('closed');
+    });
+    watcher.on('error', function (error) {
+        console.log(error);
+    });
 
     //let size = fastFolderSizeSync(".");
     //console.log(size);
