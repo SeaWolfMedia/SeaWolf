@@ -161,14 +161,15 @@ async function onTick(onComplete) {
     //     }
     // }); 
 
-    // watcher = chokidar.watch(global.contentDirectory, {
+    // let bingus  = chokidar.watch(localDirectory, {
     //     //usePolling: true,
     //     awaitWriteFinish: true,
-    //     //alwaysStat: false
+    //     alwaysStat: true
     // });
 
-    // watcher.on("all", (event, path) => {
+    // bingus.on("all", async (event, path) => {
     //     console.log(event, path);
+    //     console.log(await fs.stat(path));
     // });
 
     // watcher.on("add", (path, stats) => {
@@ -182,20 +183,20 @@ async function onTick(onComplete) {
     // })
 
     watcher = new INotifyWait(localDirectory, { recursive: true });
-    watcher.on('ready', function (filename) {
+    watcher.on('ready', function (process) {
         console.log('watcher is watching');
     });
-    watcher.on('add', function (filename) {
+    watcher.on('add', function (filename, stats) {
         console.log(filename + ' added');
     });
-    watcher.on('change', function (filename) {
+    watcher.on('change', function (filename, stats) {
         console.log(filename + ' changed');
     });
-    watcher.on('unlink', function (filename) {
+    watcher.on('unlink', function (filename, stats) {
         console.log(filename + ' unlinked');
     });
-    watcher.on('unknown', function (filename) {
-        console.log(filename + ' unknown');
+    watcher.on('unknown', function (filename, event, stats) {
+        console.log(filename + ' unknown: ' + event);
     });
     watcher.on('close', function () {
         console.log('closed');
