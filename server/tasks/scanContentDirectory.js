@@ -196,7 +196,8 @@ async function onTick(onComplete) {
         console.log(filename + ' unlinked');
     });
     watcher.on('unknown', function (filename, event, stats) {
-        console.log(filename + ' unknown: ' + event);
+        console.log(filename + ' unknown');
+        console.log(event);
     });
     watcher.on('close', function () {
         console.log('closed');
