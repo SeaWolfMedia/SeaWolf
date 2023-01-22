@@ -119,8 +119,9 @@ RUN rm -rf ./.next/standalone
 
 EXPOSE 52470
 
-VOLUME /data \
-    /content
+VOLUME /content \
+    /local \
+    /data
 
 CMD [ "yarn", "start" ]
 

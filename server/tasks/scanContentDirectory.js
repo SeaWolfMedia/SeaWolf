@@ -181,7 +181,7 @@ async function onTick(onComplete) {
     //     console.log(path, stats);
     // })
 
-    watcher = new INotifyWait(contentDirectory, { recursive: true });
+    watcher = new INotifyWait(localDirectory, { recursive: true });
     watcher.on('ready', function (filename) {
         console.log('watcher is watching');
     });

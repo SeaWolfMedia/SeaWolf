@@ -12,8 +12,9 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 global.rootDirectory = path.resolve(path.normalize("../"));
-global.dataDirectory = path.resolve(rootDirectory, "data");
 global.contentDirectory = path.resolve(rootDirectory, "content");
+global.localDirectory = path.resolve(rootDirectory, "local");
+global.dataDirectory = path.resolve(rootDirectory, "data");
 
 async function start() {
     console.clear();
