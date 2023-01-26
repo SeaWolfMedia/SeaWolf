@@ -22,8 +22,7 @@ async function onInit(task){
 
 async function onStart(task){
     watcher = new INotifyWait(contentDirectory, {
-        recursive: true,
-        events: ["create", "modify", "delete"]
+        recursive: true
     });
     watcher.on('ready', function (process) {
         console.log('watcher is watching');
@@ -37,10 +36,10 @@ async function onStart(task){
     watcher.on('unlink', function (filename, stats) {
         console.log(filename + ' unlinked');
     });
-    watcher.on('unknown', function (filename, event, stats) {
-        console.log(filename + ' unknown');
-        console.log(event);
-    });
+    // watcher.on('unknown', function (filename, event, stats) {
+    //     console.log(filename + ' unknown');
+    //     console.log(event);
+    // });
     watcher.on('close', function () {
         console.log('closed');
     });
