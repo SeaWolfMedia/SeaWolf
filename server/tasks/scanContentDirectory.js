@@ -16,6 +16,36 @@ let startTime;
 
 let watcher;
 
+async function onInit(task){
+    task.jobs.start();
+}
+
+async function onStart(task){
+    watcher = new INotifyWait(contentDirectory, { recursive: true });
+    watcher.on('ready', function (process) {
+        console.log('watcher is watching');
+    });
+    watcher.on('add', function (filename, stats) {
+        console.log(filename + ' added');
+    });
+    watcher.on('change', function (filename, stats) {
+        console.log(filename + ' changed');
+    });
+    watcher.on('unlink', function (filename, stats) {
+        console.log(filename + ' unlinked');
+    });
+    watcher.on('unknown', function (filename, event, stats) {
+        console.log(filename + ' unknown');
+        console.log(event);
+    });
+    watcher.on('close', function () {
+        console.log('closed');
+    });
+    watcher.on('error', function (error) {
+        console.log(error);
+    });
+}
+
 
 //return all folders in the directory after updating the directory files and folders
 async function directoryUpdates(directory) {
@@ -135,54 +165,8 @@ function formatBytes(bytes, decimals = 2) {
 
 async function onTick(onComplete) {
     console.time("scan");
-    //console.log(fastFolderSizeSync(contentDirectory));
 
-    //below watchtree works but can be intensive
-
-    // watch.watchTree(contentDirectory, (f, curr, prev) => {
-    //     if (typeof f == "object" && prev === null && curr === null) {
-    //         console.log("Finished walking the tree");
-    //         console.timeEnd("scan");
-    //     } else if (prev === null) {
-    //         console.log(`${f} is a new file`);
-    //     } else if (curr.nlink === 0) {
-    //         console.log(`${f} was removed`);
-    //     } else {
-    //         console.log(`${f} was changed`);
-    //     }
-    // });
-
-
-    // watch(contentDirectory, {
-    //     recursive: true
-    // }, async (event, filename) => {
-    //     if (filename) {
-    //         console.log(`${filename} file Changed`);
-    //     }
-    // }); 
-
-    // let bingus  = chokidar.watch(localDirectory, {
-    //     //usePolling: true,
-    //     awaitWriteFinish: true,
-    //     alwaysStat: true
-    // });
-
-    // bingus.on("all", async (event, path) => {
-    //     console.log(event, path);
-    //     console.log(await fs.stat(path));
-    // });
-
-    // watcher.on("add", (path, stats) => {
-    //     //console.log(path, stats);
-    //     watcher.unwatch(path);
-    //     //watcher.add(path);
-    // });
-
-    // watcher.on("change", (path, stats) => {
-    //     console.log(path, stats);
-    // })
-
-    watcher = new INotifyWait(localDirectory, { recursive: true });
+    watcher = new INotifyWait(contentDirectory, { recursive: true });
     watcher.on('ready', function (process) {
         console.log('watcher is watching');
     });
@@ -206,20 +190,6 @@ async function onTick(onComplete) {
         console.log(error);
     });
 
-    //let size = fastFolderSizeSync(".");
-    //console.log(size);
-
-    // console.time("first");
-    // let size = fastFolderSizeSync(rootDirectory);//fsUtils.fsizeSync(rootDirectory);
-    // console.timeEnd("first");
-    // console.log(formatBytes(size));
-    // console.time("second");
-    // size = fastFolderSizeSync(rootDirectory);//fsUtils.fsizeSync(rootDirectory);
-    // console.timeEnd("second");
-    // console.log(formatBytes(size));
-
-    //11022799574
-
     let {birthtime, mtime} = await fs.stat(contentDirectory);
     let rootQuery = (await db.query("folder", "upsert", {
         where: {
@@ -234,7 +204,7 @@ async function onTick(onComplete) {
         }
     })).query;
     await db.execute(rootQuery);
-    //console.timeEnd("scan");
+    console.timeEnd("scan");
     //await directoryUpdates(contentDirectory);
     return;
     // await db.transaction(async (tx) => {
@@ -329,60 +299,69 @@ const scanContentFiles = (directory, stream) => {
 }
 
 module.exports = {
-    "name": "Scan Content Directory",
-    "description": "Scans the entire content directory for changes and updates the database.",
-    "type": "manual",
-    "manual": {
-        "runOnInit": true,
-        "onTick": onTick,
-        // "onTick": async (onComplete) => { 
-        //     if(running == false){
-        //         running = true;
-        //         startTime = DateTime.now();
-        //         console.log("Scanning Content...");
-        //         await prisma.folder.upsert({
-        //             where: {
-        //                 path: contentDirectory,
-        //             },
-        //             update: {},
-        //             create: {
-        //                 name: "root",
-        //                 path: contentDirectory
-        //             }
-        //         });
-        //         var upsertsFilePath = path.resolve(dataDirectory, "upserts.seawolf");
-        //         var writableStream = createWriteStream(upsertsFilePath);
-        //         await scanContentFiles(contentDirectory, writableStream);
-        //         writableStream.end();
-        //         var readableStream = createReadStream(upsertsFilePath)
-        //         var upserts = [];
-        //         const rl = readline.createInterface({
-        //             input: readableStream,
-        //             crlfDelay: Infinity
-        //         });
-        //         for await (var line of rl) {
-        //             var data = JSON.parse(line);
-        //             if (data.type == "folder") {
-        //                 upserts.push(prisma.folder.upsert(data.data));
-        //             } else {
-        //                 upserts.push(prisma.file.upsert(data.data));
-        //             }
-        //             if (upserts.length >= 100000) {
-        //                 await prisma.$transaction(upserts);
-        //                 upserts = [];
-        //             }
-        //         }
-        //         readableStream.close();
-        //         rl.close();
-        //         await prisma.$transaction(upserts);
-        //         await fs.unlink(upsertsFilePath);
-        //         onComplete();
-        //     }
-        // },
-        "onComplete": () => { 
-            //running = false;
-            //console.log("Scanned content (" + DateTime.now().minus(startTime.toObject()).toFormat("HH'h 'mm'm 'ss's'") + ")");
-            console.log("complete");
-        }
-    }
+    id: "scan-content-directory",
+    name: "Scan Content Directory",
+    description: "Scans the entire content directory for changes and updates the database.",
+    onInit: onInit,
+    onStart: onStart
 }
+
+// module.exports = {
+//     "id": "scan-content-directory",
+//     "name": "Scan Content Directory",
+//     "description": "Scans the entire content directory for changes and updates the database.",
+//     "type": "manual",
+//     "manual": {
+//         "runOnInit": true,
+//         "onTick": onTick,
+//         // "onTick": async (onComplete) => { 
+//         //     if(running == false){
+//         //         running = true;
+//         //         startTime = DateTime.now();
+//         //         console.log("Scanning Content...");
+//         //         await prisma.folder.upsert({
+//         //             where: {
+//         //                 path: contentDirectory,
+//         //             },
+//         //             update: {},
+//         //             create: {
+//         //                 name: "root",
+//         //                 path: contentDirectory
+//         //             }
+//         //         });
+//         //         var upsertsFilePath = path.resolve(dataDirectory, "upserts.seawolf");
+//         //         var writableStream = createWriteStream(upsertsFilePath);
+//         //         await scanContentFiles(contentDirectory, writableStream);
+//         //         writableStream.end();
+//         //         var readableStream = createReadStream(upsertsFilePath)
+//         //         var upserts = [];
+//         //         const rl = readline.createInterface({
+//         //             input: readableStream,
+//         //             crlfDelay: Infinity
+//         //         });
+//         //         for await (var line of rl) {
+//         //             var data = JSON.parse(line);
+//         //             if (data.type == "folder") {
+//         //                 upserts.push(prisma.folder.upsert(data.data));
+//         //             } else {
+//         //                 upserts.push(prisma.file.upsert(data.data));
+//         //             }
+//         //             if (upserts.length >= 100000) {
+//         //                 await prisma.$transaction(upserts);
+//         //                 upserts = [];
+//         //             }
+//         //         }
+//         //         readableStream.close();
+//         //         rl.close();
+//         //         await prisma.$transaction(upserts);
+//         //         await fs.unlink(upsertsFilePath);
+//         //         onComplete();
+//         //     }
+//         // },
+//         "onComplete": () => { 
+//             //running = false;
+//             //console.log("Scanned content (" + DateTime.now().minus(startTime.toObject()).toFormat("HH'h 'mm'm 'ss's'") + ")");
+//             console.log("complete");
+//         }
+//     }
+// }

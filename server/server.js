@@ -13,7 +13,6 @@ const handle = app.getRequestHandler();
 
 global.rootDirectory = path.resolve(path.normalize("../"));
 global.contentDirectory = path.resolve(rootDirectory, "content");
-global.localDirectory = path.resolve(rootDirectory, "local");
 global.dataDirectory = path.resolve(rootDirectory, "data");
 
 async function start() {
