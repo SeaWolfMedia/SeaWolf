@@ -21,7 +21,10 @@ async function onInit(task){
 }
 
 async function onStart(task){
-    watcher = new INotifyWait(contentDirectory, { recursive: true });
+    watcher = new INotifyWait(contentDirectory, {
+        recursive: true,
+        events: ["create", "modify", "delete"]
+    });
     watcher.on('ready', function (process) {
         console.log('watcher is watching');
     });
