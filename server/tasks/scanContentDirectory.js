@@ -1,51 +1,65 @@
 const path = require('path');
 const fs = require('fs').promises;
-const { createWriteStream, createReadStream } = require("fs");
-const readline = require('readline');
-const { DateTime } = require("luxon");
 const chokidar = require('chokidar');
-const fastFolderSizeSync = require('fast-folder-size/sync');
-//const watch = require("watch");
-const { watch } = require('fs');
-const fsUtils = require("nodejs-fs-utils");
-
+const CronJob = require('cron').CronJob;
 const INotifyWait = require('inotifywait');
+var os = require('os');
 
 let running = false;
 let startTime;
-
 let watcher;
 
-async function onInit(task){
-    task.jobs.start();
+async function onInit(manager, task){
+    manager.start(task);
 }
 
-async function onStart(task){
-    watcher = new INotifyWait(contentDirectory, {
-        recursive: true,
-        events: ["modify", "attrib", "create", "delete", "moved_to", "close_write"]
-    });
-    watcher.on('ready', function (process) {
-        console.log('watcher is watching');
-    });
-    watcher.on('add', function (filename, stats) {
-        console.log(filename + ' added');
-    });
-    watcher.on('change', function (filename, stats) {
-        console.log(filename + ' changed');
-    });
-    watcher.on('unlink', function (filename, stats) {
-        console.log(filename + ' unlinked');
-    });
-    // watcher.on('unknown', function (filename, event, stats) {
-    //     console.log(filename + ' unknown');
-    //     console.log(event);
-    // });
-    watcher.on('close', function () {
-        console.log('closed');
-    });
-    watcher.on('error', function (error) {
-        console.log(error);
+async function onStart(manager, task){
+    return new Promise((resolve, reject) => {
+        if(os.platform() == "linux"){
+            watcher = new INotifyWait(contentDirectory, {
+                recursive: true,
+                watchDirectory: true,
+                events: ["modify", "attrib", "create", "delete", "moved_to", "close_write"]
+            });
+            console.log("chose inotifywait");
+        } else {
+            watcher = chokidar.watch(contentDirectory, {
+                ignoreInitial: true
+            });
+            console.log("chose chokidar");
+        }
+        watcher.on('ready', (process) => {
+            console.log('watcher is watching');
+            manager.run(task);
+            resolve();
+        });
+        watcher.on('add', (filename, stats) => {
+            console.log(filename + ' added');
+        });
+        watcher.on('addDir', (name, stats) => {
+            console.log(name + ' added');
+        })
+        watcher.on('change', (filename, stats) => {
+            console.log(filename + ' changed');
+        });
+        watcher.on('unlink', (filename, stats) => {
+            console.log(filename + ' unlinked');
+        });
+        watcher.on('unlinkDir', (name, stats) => {
+            console.log(name + ' unlinked');
+        })
+        // watcher.on('unknown', function (filename, event, stats) {
+        //     console.log(filename + ' unknown');
+        //     console.log(event);
+        // });
+        watcher.on('close', () => {
+            console.log('closed');
+            reject();
+        });
+        watcher.on('error', (error) => {
+            console.log(error);
+            reject();
+        });
     });
 }
 

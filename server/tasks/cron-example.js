@@ -1,4 +1,5 @@
 module.exports = {
+    "id":"cron-example",
     /**
      * The name of the task
      */

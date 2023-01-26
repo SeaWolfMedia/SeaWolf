@@ -1,4 +1,5 @@
 module.exports = {
+    "id":"manual-example",
     /**
      * The name of the task
      */
