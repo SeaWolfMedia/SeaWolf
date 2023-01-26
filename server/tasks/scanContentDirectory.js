@@ -16,15 +16,19 @@ async function onInit(manager, task){
 async function onStart(manager, task){
     return new Promise((resolve, reject) => {
         if(os.platform() == "linux"){
+
+            // make my own inotifywait using heavy reference from the current one and output the same as chokidar
+            // so new folders are also logged to be created
+
             watcher = new INotifyWait(contentDirectory, {
                 recursive: true,
-                watchDirectory: true,
                 events: ["modify", "attrib", "create", "delete", "moved_to", "close_write"]
             });
             console.log("chose inotifywait");
         } else {
             watcher = chokidar.watch(contentDirectory, {
-                ignoreInitial: true
+                ignoreInitial: true,
+                alwaysStat: true
             });
             console.log("chose chokidar");
         }
@@ -36,18 +40,12 @@ async function onStart(manager, task){
         watcher.on('add', (filename, stats) => {
             console.log(filename + ' added');
         });
-        watcher.on('addDir', (name, stats) => {
-            console.log(name + ' added');
-        })
         watcher.on('change', (filename, stats) => {
             console.log(filename + ' changed');
         });
-        watcher.on('unlink', (filename, stats) => {
+        watcher.on('unlink', (filename) => {
             console.log(filename + ' unlinked');
         });
-        watcher.on('unlinkDir', (name, stats) => {
-            console.log(name + ' unlinked');
-        })
         // watcher.on('unknown', function (filename, event, stats) {
         //     console.log(filename + ' unknown');
         //     console.log(event);
