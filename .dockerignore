@@ -1,11 +1,14 @@
+.git
+.github
 .next
 .swc
 .vscode
 node_modules
 .dockerignore
+.env
 .gitignore
 docker-compose.yml
 Dockerfile
 LICENSE
 README.md
-seawolf.code-workspace
+.log

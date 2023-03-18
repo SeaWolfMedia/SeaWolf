@@ -5,5 +5,4 @@
  */
 
 require('module-alias/register');
-require('dotenv').config();
 require("@seawolf/server/server.js");

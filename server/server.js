@@ -4,7 +4,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const { exec } = require('child_process');
 const chokidar = require('chokidar');
-global.db = require("@util/prismaManager.js");
+//global.db = require("@util/prismaManager.js");
 const tasks = require("./util/tasks.js");
 
 const dev = process.env.NODE_ENV !== 'production';

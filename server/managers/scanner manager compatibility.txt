@@ -1,0 +1,2 @@
+my laptop: Windows_NT 10.0.22621 win32
+my laptop docker: Linux 5.10.102.1-microsoft-standard-WSL2 linux

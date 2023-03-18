@@ -15,6 +15,7 @@ async function onInit(manager, task){
 
 async function onStart(manager, task){
     return new Promise((resolve, reject) => {
+        console.log(os.type(), os.release(), os.platform());
         if(os.platform() == "linux"){
 
             // make my own inotifywait using heavy reference from the current one and output the same as chokidar
